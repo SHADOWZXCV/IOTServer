@@ -15,7 +15,7 @@ const mongoDB = require('mongodb');
 
 // const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
-// client.subscribe('sus', function (err) {
+// client.subscribe'sus', function (err) {
 //     if (err) console.log(err);
 // })
 // client.on('message', function (topic, message) {
