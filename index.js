@@ -75,8 +75,7 @@ io.on('connection', socket => {
                     console.log(err);
                 } else {
                     console.log('found it');
-                    // note: 1 is for publishing!
-                    MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
+
                     devices.updateOne({
                         "ID": data.DeviceID
                     }, {
@@ -85,6 +84,8 @@ io.on('connection', socket => {
                         }
                     }).then(function (res) {
                         if (res) {
+                            // note: 1 is for publishing!
+                            MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
                             socket.emit('changs', {
                                 Result: 1
                             });
