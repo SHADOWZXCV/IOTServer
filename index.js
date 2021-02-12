@@ -5,17 +5,18 @@
 // required made-modules
 // const MQTT_C = require('./devices');
 // required modules
-const express = require('express');
-const app = express();
-const http = require('http');
-const socket = require('socket.io');
-const mongoDB = require('mongodb');
+const app = require('express')();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const {
+    MongoClient
+} = require('mongodb');
 // const mqtt = require('mqtt');
 ///////////////////////
 
 // const client = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
-// client.subscribe'sus', function (err) {
+// client.subscribe('sus', function (err) {
 //     if (err) console.log(err);
 // })
 // client.on('message', function (topic, message) {
@@ -24,61 +25,82 @@ const mongoDB = require('mongodb');
 ///////////////////
 
 // setup server
-const server = http.createServer(app);
 var port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`app started at port 3000!`));
-
-
+let client;
 // mongodb connect
-const URL = "mongodb+srv://Alexbnm:123qweasdzxc@clusteriot.eroin.mongodb.net/IOT?retryWrites=true&w=majority";
-
-
-// io sockets
-const io = socket(server);
-
-
-app.get('/', function (req, res, next) {
-    io.on('connection', socket => {
-        console.log('connected socket to server ' + socket.id);
-        mongoDB.connect(URL, function (err, db) {
-            if (err) throw err;
-            const table = db.db("IOT");
-            const devices = table.collection('Devices');
-
-            // changes listening
-            socket.on('changing', data => {
-                console.log('emitted!');
-                devices.findOne({
-                    "ID": data.DeviceID
-                }, function (err, res) {
-                    if (!res) {
-                        console.log('Nothing');
-                        db.close();
-                    } else if (err) {
-                        console.log(err);
-                    } else {
-                        // note: 1 is for publishing!
-                        // MQTT_C.connectMQTT(1, data.Status, 'sus');
-                        devices.updateOne({
-                            "ID": data.DeviceID
-                        }, {
-                            $set: {
-                                "Status": data.Status
-                            }
-                        }).then(function (res) {
-                            if (res) {
-                                socket.emit('changing', {
-                                    Result: 1
-                                });
-                            }
-                        });
-
-                    }
-
-                });
-            });
+async function connectToDB(URi) {
+    try {
+        client = MongoClient(URi, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         });
+        if (!client.isConnected()) {
+            await client.connect().then(function (data) {
+                console.log("Connected to MongoDB cluster M0!!");
+            });
+        } else {
+            console.log('connected to DB already');
+        }
+        return client;
+
+    } catch (e) {
+        console.log(e);
+    }
+    //  finally {
+    //      client.close();
+    //  }
+}
+
+
+const URi = "mongodb+srv://Alexbnm:123qweasdzxc@clusteriot.eroin.mongodb.net/IOT?retryWrites=true&w=majority";
+Object.freeze(URi);
+connectToDB(URi);
+// io sockets
+
+io.on('connection', socket => {
+    console.log('connected socket to server ' + socket.id);
+    // changes listening
+    socket.on('changs', data => {
+        console.log('emitting' + data);
+        try {
+            const devices = client.db('IOT').collection('Devices');
+            devices.findOne({
+                "ID": data.DeviceID
+            }, function (err, res) {
+                if (!res) {
+                    console.log('Nothing');
+                    db.close().then((data) => console.log('db closed'));
+                } else if (err) {
+                    console.log(err);
+                } else {
+                    console.log('found it');
+                    // note: 1 is for publishing!
+                    // MQTT_C.connectMQTT(1, data.Status, 'sus');
+                    devices.updateOne({
+                        "ID": data.DeviceID
+                    }, {
+                        $set: {
+                            "Status": data.Status
+                        }
+                    }).then(function (res) {
+                        if (res) {
+                            socket.emit('changs', {
+                                Result: 1
+                            });
+                        }
+                    });
+
+                }
+
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
     });
+});
+app.get('/', function (req, res, next) {
 
 
 });
