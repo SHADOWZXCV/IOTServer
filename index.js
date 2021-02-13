@@ -13,14 +13,15 @@ const {
 } = require('mongodb');
 const mqtt = require('mqtt');
 ///////////////////////
-
+let messageMQTT = "";
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
 clientMQTT.subscribe('sus', function (err) {
     if (err) console.log(err);
 })
 clientMQTT.on('message', function (topic, message) {
-    console.log(topic + ' s ' + message)
+    console.log(topic + ' s ' + message + ", Sending to client now...");
+    messageMQTT = message;
 });
 ///////////////////
 
@@ -87,7 +88,7 @@ io.on('connection', socket => {
                             // note: 1 is for publishing!
                             MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
                             socket.emit('changs', {
-                                Result: 1
+                                Result: messageMQTT
                             });
                         }
                     });
