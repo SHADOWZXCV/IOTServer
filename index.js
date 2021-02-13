@@ -13,15 +13,14 @@ const {
 } = require('mongodb');
 const mqtt = require('mqtt');
 ///////////////////////
-let messageMQTT = "";
+var messageMQTT;
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
 clientMQTT.subscribe('sus', function (err) {
     if (err) console.log(err);
 })
 clientMQTT.on('message', function (topic, message) {
-    console.log(topic + ' s ' + message + ", Sending to client now...");
-    messageMQTT = message;
+    console.log(topic + ' s ' + message + ", Sent to client!");
 });
 ///////////////////
 
@@ -63,7 +62,8 @@ io.on('connection', socket => {
     console.log('connected socket to server ' + socket.id);
     // changes listening
     socket.on('changs', data => {
-        console.log('emitting' + data.Status);
+        console.log('emitting: ' + data.Status);
+        messageMQTT = data.Status;
         try {
             const devices = client.db('IOT').collection('Devices');
             devices.findOne({
