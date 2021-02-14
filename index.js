@@ -38,7 +38,6 @@ async function connectToDB(URi) {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        Object.freeze(clientMongo);
         if (!clientMongo.isConnected()) {
             await clientMongo.connect().then(function (data) {
                 console.log("Connected to MongoDB cluster M0!!");
