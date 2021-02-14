@@ -106,21 +106,3 @@ app.get('/', function (req, res, next) {
 
 
 });
-
-
-
-
-
-// devices setup 
-//mongoDB.connect(url, function(err, db){
-//    if(err) throw err;
-//    const table = db.db('IOT');
-//    var device = {
-//        ID: "121200300312003g",
-//        Status: 0
-//    }
-//    table.collection('Devices').insertOne(device,function(err, res){
-//        if(err) throw err;
-//        console.log('added device');
-//    });
-//});
