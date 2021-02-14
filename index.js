@@ -67,7 +67,7 @@ io.on('connection', socket => {
         console.log('emitting: ' + data.Status);
         messageMQTT = data.Status;
         try {
-            findDevice(clientMongo, data).then(function (res) {
+            MQTT_C.findDevice(clientMongo, data).then(function (res) {
                 if (res) {
                     // note: 1 is for publishing!
                     MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
