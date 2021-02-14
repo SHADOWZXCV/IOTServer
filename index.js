@@ -2,8 +2,10 @@
 // Uses http and the famous socket io for real-time user-to-server transmittion.
 // And mqtt for fast, easy IoT-to-server data transmittion.
 // Current database cluster is free atm, holds up to 500 connections, available at: https://cloud.mongodb.com/v2/5ffb1ceb9467e10b4446522f#clusters/edit/ClusterIOT.
+
 // required made-modules
 const MQTT_C = require('./devices');
+
 // required modules
 const app = require('express')();
 const server = require('http').Server(app);
@@ -12,6 +14,7 @@ const {
     MongoClient
 } = require('mongodb');
 const mqtt = require('mqtt');
+
 ///////////////////////
 var messageMQTT;
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
