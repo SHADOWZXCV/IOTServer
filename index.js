@@ -22,9 +22,10 @@ const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 clientMQTT.subscribe('sus', function (err) {
     if (err) console.log(err);
 })
-clientMQTT.on('message', function (topic, message) {
-    console.log(topic + ' s ' + message + ", Sent to client!");
-});
+// old place
+// clientMQTT.on('message', function (topic, message) {
+//     console.log(topic + ' topic, ' + message + ", Sent to client!");
+// });
 ///////////////////
 
 // setup server
@@ -97,15 +98,14 @@ io.on('connection', socket => {
                     });
 
                 }
-
             });
 
         } catch (e) {
             console.log(e);
         }
     });
-});
-app.get('/', function (req, res, next) {
-
-
+    clientMQTT.on('message', function (topic, message) {
+        console.log(topic + ' topic, ' + message + ", Sent to client!");
+        socket.emit('deviceChange', String(message))
+    });
 });
