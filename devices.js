@@ -14,10 +14,10 @@ function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
         console.log('Reconnecting...')
     })
 
-    if (subscribe != 0 && message != '' && topic != '') {
+    if (subscribe != 0 && message != {} && topic != '') {
         console.log('Client connected:' + clientId)
         // Publish
-        client.publish(topic, message)
+        client.publish(topic, JSON.stringify(message))
 
     }
 }
