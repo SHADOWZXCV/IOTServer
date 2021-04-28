@@ -19,7 +19,7 @@ const mqtt = require('mqtt');
 var messageMQTT;
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
-clientMQTT.subscribe('sus', function (err) {
+clientMQTT.subscribe('unic', function (err) {
     if (err) console.log(err);
 })
 // old place
@@ -90,7 +90,7 @@ io.on('connection', socket => {
                     }).then(function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                            MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
+                            MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic');
                             socket.emit('changs', {
                                 Result: messageMQTT
                             });
