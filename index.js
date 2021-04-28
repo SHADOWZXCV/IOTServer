@@ -67,6 +67,23 @@ connectToDB(URi);
 
 io.on('connection', socket => {
     console.log('connected socket to server ' + socket.id);
+    // request available devices
+    socket.on('requestAvailable', data=> {
+                    socket.emit('deviceChange', {
+                      'id_node': 2445493430,
+                      'type': 'main',
+                      'nodes': [
+                        {
+                          'id_node': 37473718,
+                          'type': 'LED12345'
+                        },
+                        {
+                          'id_node': 27473718,
+                          'type': 'LED67890'
+                        }
+                      ]
+        })
+    })
     // changes listening
     socket.on('changs', data => {
         console.log('emitting: ' + data.Status);
@@ -110,20 +127,6 @@ io.on('connection', socket => {
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
         if(topic == 'dev'){
-//             socket.emit('deviceChange', {
-//               'id_node': 2445493430,
-//               'type': 'main',
-//               'nodes': [
-//                 {
-//                   'id_node': 37473718,
-//                   'type': 'LED12345'
-//                 },
-//                 {
-//                   'id_node': 27473718,
-//                   'type': 'LED67890'
-//                 }
-//               ]
-// })
         socket.emit('deviceChange', JSON.parse(message))
         }
 
