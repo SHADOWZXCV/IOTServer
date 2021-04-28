@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 exports.connectMQTT = connectMQTT;
 
 
-function connectMQTT(client, subscribe = 0, message = '', topic = '') {
+function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
     const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
     client.on('error', (err) => {
