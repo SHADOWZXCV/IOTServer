@@ -22,6 +22,9 @@ const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 clientMQTT.subscribe('unic', function (err) {
     if (err) console.log(err);
 })
+clientMQTT.subscribe('dev', function (err) {
+    if (err) console.log(err);
+})
 // old place
 // clientMQTT.on('message', function (topic, message) {
 //     console.log(topic + ' topic, ' + message + ", Sent to client!");
@@ -106,19 +109,22 @@ io.on('connection', socket => {
     });
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
-        socket.emit('deviceChange', {
-  'id_node': 2445493430,
-  'type': 'main',
-  'nodes': [
-    {
-      'id_node': 37473718,
-      'type': 'LED12345'
-    },
-    {
-      'id_node': 27473718,
-      'type': 'LED67890'
-    }
-  ]
-})
-    });
+        if(topic == 'dev'){
+//             socket.emit('deviceChange', {
+//               'id_node': 2445493430,
+//               'type': 'main',
+//               'nodes': [
+//                 {
+//                   'id_node': 37473718,
+//                   'type': 'LED12345'
+//                 },
+//                 {
+//                   'id_node': 27473718,
+//                   'type': 'LED67890'
+//                 }
+//               ]
+// })
+//         }
+//     });
+        socket.emit('deviceChange', JSON.parse(message))
 });
