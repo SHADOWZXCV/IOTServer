@@ -106,6 +106,19 @@ io.on('connection', socket => {
     });
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
-        socket.emit('deviceChange', String(message))
+        socket.emit('deviceChange', {
+  'id_node': 2445493430,
+  'type': 'main',
+  'nodes': [
+    {
+      'id_node': 37473718,
+      'type': 'LED12345'
+    },
+    {
+      'id_node': 27473718,
+      'type': 'LED67890'
+    }
+  ]
+})
     });
 });
