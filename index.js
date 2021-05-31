@@ -69,20 +69,21 @@ io.on('connection', socket => {
     console.log('connected socket to server ' + socket.id);
     // request available devices
     socket.on('requestAvailable', data=> {
-                    socket.emit('deviceChange', {
-                      'id_node': 2445493430,
-                      'type': 'main',
-                      'nodes': [
-                        {
-                          'id_node': 37473718,
-                          'type': 'LED12345'
-                        },
-                        {
-                          'id_node': 27473718,
-                          'type': 'LED67890'
-                        }
-                      ]
-        })
+        MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic');
+ //                     socket.emit('deviceChange', {
+//                       'id_node': 2445493430,
+//                       'type': 'main',
+//                       'nodes': [
+//                         {
+//                           'id_node': 37473718,
+//                           'type': 'LED12345'
+//                         },
+//                         {
+//                           'id_node': 27473718,
+//                           'type': 'LED67890'
+//                         }
+//                       ]
+//         })
     })
     // changes listening
     socket.on('changs', data => {
@@ -127,7 +128,13 @@ io.on('connection', socket => {
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
         if(topic == 'dev'){
-        socket.emit('deviceChange', JSON.parse(message))
+        if(typeof message == 'String'){
+                socket.emit('deviceChange', message)            
+            }
+            else {
+                socket.emit('deviceChange', JSON.parse(message))            
+            }
+
         }
 
     });
