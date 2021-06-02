@@ -1,6 +1,6 @@
 const SLEEP = require('./sleep');
 
-var available;
+var available = 0;
 function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
     const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
