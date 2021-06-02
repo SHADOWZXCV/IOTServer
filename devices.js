@@ -1,7 +1,7 @@
 const SLEEP = require('./sleep');
 
-var available = 0;
-function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
+
+function connectMQTT(client, subscribe = 0, message = {}, topic = '', available) {
     const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
     client.on('error', (err) => {
@@ -19,7 +19,6 @@ function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
         // Publish
             client.publish(topic, JSON.stringify(message))
             SLEEP(1000);
-            console.log('available: ' + available);
             if(available == 0){
                 return false;
             }
@@ -31,7 +30,4 @@ function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
 
 }
 
-
-
 exports.connectMQTT = connectMQTT;
-exports.available = available;
