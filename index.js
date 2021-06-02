@@ -20,10 +20,10 @@ var messageMQTT;
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
 clientMQTT.subscribe('unic', function (err) {
-    if (err) console.log(err);
+    if (err) console.dir(err);
 })
 clientMQTT.subscribe('dev', function (err) {
-    if (err) console.log(err);
+    if (err) console.dir(err);
 })
 // old place
 // clientMQTT.on('message', function (topic, message) {
@@ -66,11 +66,12 @@ connectToDB(URi);
 // io sockets
 
 io.on('connection', socket => {
+    var available = 0;
     console.log('connected socket to server ' + socket.id);
     // request available devices
     socket.on('requestAvailable', data=> {
-        const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic');
-        console.log('isAvailable: ' + isAvailable);
+        const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic',available);
+        
         if(isAvailable == false){
             socket.emit('requestAvailable', {
                 'response': '0'
@@ -117,7 +118,7 @@ io.on('connection', socket => {
                     }).then(function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                           const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic');
+                           const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available);
                            if(isAvailable == false){
                                 socket.emit('requestAvailable', {
                                     'response': '0'
@@ -139,7 +140,7 @@ io.on('connection', socket => {
         }
     });
     clientMQTT.on('message', function (topic, message) {
-        MQTT_C.available = 1;
+        available = 1;
         console.log(topic + ' topic, ' + message + ", Sent to client!");
         if(topic == 'dev'){
                 if(message['nAv']){
