@@ -70,6 +70,7 @@ io.on('connection', socket => {
     // request available devices
     socket.on('requestAvailable', data=> {
         const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic');
+        console.log('isAvailable: ' + isAvailable);
         if(isAvailable == false){
             socket.emit('requestAvailable', {
                 'response': '0'
