@@ -71,7 +71,7 @@ io.on('connection', socket => {
     // request available devices
     socket.on('requestAvailable', data=> {
         const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic',available);
-        
+        console.log('isAvailable: ' + isAvailable);
         if(isAvailable == false){
             socket.emit('requestAvailable', {
                 'response': '0'
@@ -119,7 +119,8 @@ io.on('connection', socket => {
                         if (res) {
                             // note: 1 is for publishing!
                            const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available);
-                           if(isAvailable == false){
+                            console.log('isAvailable: ' + isAvailable);
+                            if(isAvailable == false){
                                 socket.emit('requestAvailable', {
                                     'response': '0'
                                 })
@@ -140,6 +141,7 @@ io.on('connection', socket => {
         }
     });
     clientMQTT.on('message', function (topic, message) {
+        console.log('setting available to 1...');
         available = 1;
         console.log(topic + ' topic, ' + message + ", Sent to client!");
         if(topic == 'dev'){
