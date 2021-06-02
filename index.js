@@ -19,12 +19,16 @@ const mqtt = require('mqtt');
 var messageMQTT;
 const clientMQTT = mqtt.connect('mqtt://test.mosquitto.org:1883');
 
-clientMQTT.subscribe('sus', function (err) {
+clientMQTT.subscribe('unic', function (err) {
     if (err) console.log(err);
 })
-clientMQTT.on('message', function (topic, message) {
-    console.log(topic + ' s ' + message + ", Sent to client!");
-});
+clientMQTT.subscribe('dev', function (err) {
+    if (err) console.log(err);
+})
+// old place
+// clientMQTT.on('message', function (topic, message) {
+//     console.log(topic + ' topic, ' + message + ", Sent to client!");
+// });
 ///////////////////
 
 // setup server
@@ -63,6 +67,29 @@ connectToDB(URi);
 
 io.on('connection', socket => {
     console.log('connected socket to server ' + socket.id);
+    // request available devices
+    socket.on('requestAvailable', data=> {
+        const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic');
+        if(isAvailable == false){
+            socket.emit('requestAvailable', {
+                'response': '0'
+            })
+        }
+ //                     socket.emit('deviceChange', {
+//                       'id_node': 2445493430,
+//                       'type': 'main',
+//                       'nodes': [
+//                         {
+//                           'id_node': 37473718,
+//                           'type': 'LED12345'
+//                         },
+//                         {
+//                           'id_node': 27473718,
+//                           'type': 'LED67890'
+//                         }
+//                       ]
+//         })
+    })
     // changes listening
     socket.on('changs', data => {
         console.log('emitting: ' + data.Status);
@@ -89,23 +116,42 @@ io.on('connection', socket => {
                     }).then(function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                            MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'sus');
-                            socket.emit('changs', {
-                                Result: messageMQTT
-                            });
+                           const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic');
+                           if(isAvailable == false){
+                                socket.emit('requestAvailable', {
+                                    'response': '0'
+                                })
+                            }
+                            else {
+                                 socket.emit('changs', {
+                                    Result: messageMQTT
+                                 });
+                            }
                         }
                     });
 
                 }
-
             });
 
         } catch (e) {
             console.log(e);
         }
     });
-});
-app.get('/', function (req, res, next) {
+    clientMQTT.on('message', function (topic, message) {
+        MQTT_C.available = 1;
+        console.log(topic + ' topic, ' + message + ", Sent to client!");
+        if(topic == 'dev'){
+                if(message['nAv']){
+                    socket.emit('requestAvailable', message)
+                    return;
+                }
+                if(typeof message == 'String'){
+                    socket.emit('deviceChange', message)
+                }
+                else {
+                    socket.emit('deviceChange', JSON.parse(message))
+                }
+        }
 
-
+    });
 });
