@@ -118,8 +118,8 @@ io.on('connection', socket => {
                     }).then(function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                           const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available);
-                            console.log('isAvailable: ' + isAvailable);
+                           MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available).then((isAvailable)=>{
+                               console.log('returned val: ' + value);
                             if(isAvailable == false){
                                 socket.emit('requestAvailable', {
                                     'response': '0'
@@ -129,7 +129,9 @@ io.on('connection', socket => {
                                  socket.emit('changs', {
                                     Result: messageMQTT
                                  });
-                            }
+                            }                               
+                           })
+
                         }
                     });
 
