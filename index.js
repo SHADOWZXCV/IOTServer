@@ -142,9 +142,10 @@ io.on('connection', socket => {
     });
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
+        // note: this should be after topic == dev
+        console.log('setting available to 1...');
+        available = 1;
         if(topic == 'dev'){
-                    console.log('setting available to 1...');
-                    available = 1;
                 if(message['nAv']){
                     socket.emit('requestAvailable', message)
                     return;
