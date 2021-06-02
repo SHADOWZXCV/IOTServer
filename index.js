@@ -156,6 +156,6 @@ io.on('connection', socket => {
                     socket.emit('deviceChange', JSON.parse(message))
                 }
         }
-
+     available = 0;   
     });
 });
