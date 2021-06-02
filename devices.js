@@ -19,6 +19,7 @@ function connectMQTT(client, subscribe = 0, message = {}, topic = '') {
         // Publish
             client.publish(topic, JSON.stringify(message))
             SLEEP(1000);
+            console.log('available: ' + available);
             if(available == 0){
                 return false;
             }
