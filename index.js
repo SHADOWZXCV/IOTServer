@@ -141,10 +141,10 @@ io.on('connection', socket => {
         }
     });
     clientMQTT.on('message', function (topic, message) {
-        console.log('setting available to 1...');
-        available = 1;
         console.log(topic + ' topic, ' + message + ", Sent to client!");
         if(topic == 'dev'){
+                    console.log('setting available to 1...');
+                    available = 1;
                 if(message['nAv']){
                     socket.emit('requestAvailable', message)
                     return;
@@ -156,6 +156,5 @@ io.on('connection', socket => {
                     socket.emit('deviceChange', JSON.parse(message))
                 }
         }
-     available = 0;   
     });
 });
