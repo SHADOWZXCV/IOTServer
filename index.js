@@ -69,14 +69,17 @@ io.on('connection', socket => {
     var available = 0;
     console.log('connected socket to server ' + socket.id);
     // request available devices
-    socket.on('requestAvailable', data=> {
-        const isAvailable = MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic',available);
-        console.log('isAvailable: ' + isAvailable);
-        if(isAvailable == false){
-            socket.emit('requestAvailable', {
-                'response': '0'
-            })
-        }
+    socket.on('requestAvailable', async (data)=> {
+        await MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic').then(()=>{
+            var isAvailable =   MQTT_C.checkAvailable(available);
+            console.log('available: ' + available);
+            console.log('isAvailable: ' + isAvailable);
+            if(isAvailable == false){
+                socket.emit('requestAvailable', {
+                    'response': '0'
+                })
+            }
+        })
  //                     socket.emit('deviceChange', {
 //                       'id_node': 2445493430,
 //                       'type': 'main',
@@ -115,11 +118,11 @@ io.on('connection', socket => {
                         $set: {
                             "Status": data.Status
                         }
-                    }).then(function (res) {
+                    }).then(async function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                           MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available).then((isAvailable)=>{
-                               console.log('returned val: ' + value);
+                           await MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available).then((isAvailable)=>{
+                            console.log('isAvailable: ' + isAvailable);
                             if(isAvailable == false){
                                 socket.emit('requestAvailable', {
                                     'response': '0'
@@ -129,9 +132,8 @@ io.on('connection', socket => {
                                  socket.emit('changs', {
                                     Result: messageMQTT
                                  });
-                            }                               
+                            }
                            })
-
                         }
                     });
 
@@ -144,10 +146,9 @@ io.on('connection', socket => {
     });
     clientMQTT.on('message', function (topic, message) {
         console.log(topic + ' topic, ' + message + ", Sent to client!");
-        // note: this should be after topic == dev
-        console.log('setting available to 1...');
-        available = 1;
         if(topic == 'dev'){
+            console.log('setting available to 1...');
+            available = 1;
                 if(message['nAv']){
                     socket.emit('requestAvailable', message)
                     return;
