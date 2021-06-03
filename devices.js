@@ -35,6 +35,5 @@ function checkAvailable(available){
     }
     return isAv;
 }
-
 exports.connectMQTT = connectMQTT;
 exports.checkAvailable = checkAvailable;
