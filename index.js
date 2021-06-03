@@ -121,17 +121,19 @@ io.on('connection', socket => {
                     }).then(async function (res) {
                         if (res) {
                             // note: 1 is for publishing!
-                           await MQTT_C.connectMQTT(clientMQTT, 1, data.Status, 'unic',available).then((isAvailable)=>{
-                            console.log('isAvailable: ' + isAvailable);
-                            if(isAvailable == false){
-                                socket.emit('requestAvailable', {
-                                    'response': '0'
-                                })
-                            }
-                            else {
-                                 socket.emit('changs', {
-                                    Result: messageMQTT
-                                 });
+                            await MQTT_C.connectMQTT(clientMQTT, 1, data, 'unic').then(()=>{
+                                var isAvailable =   MQTT_C.checkAvailable(available);
+                                console.log('available: ' + available);
+                                console.log('isAvailable: ' + isAvailable);
+                                if(isAvailable == false){
+                                    socket.emit('requestAvailable', {
+                                        'response': '0'
+                                    })
+                                }
+                                else {
+                                    socket.emit('changs', {
+                                       Result: messageMQTT
+                                });
                             }
                            })
                         }
