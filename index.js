@@ -80,9 +80,7 @@ io.on('connection', socket => {
                 })
             }
             else{
-                                    socket.emit('changs', {
-                                       Result: messageMQTT
-                   });
+                     socket.emit('changs',messageMQTT);
             }
         })
  //                     socket.emit('deviceChange', {
@@ -136,7 +134,9 @@ io.on('connection', socket => {
                                     })
                                 }
                                 else {
-                                    socket.emit('changs', messageMQTT);
+                                    socket.emit('changs', {
+                                       Result: messageMQTT
+                                });
                             }
                            })
                         }
