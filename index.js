@@ -177,4 +177,4 @@ ioConnection(clientMQTT,io)
 
 // DEVICES TRANSMISSION INIT END
 
-server.listen(process.env.MODE === 'DEVELOPMENT' ? process.env.DEV_PORT : process.env.PORT, () => CONSOLE(`Server started at port ${process.env.MODE === 'DEVELOPMENT' ? process.env.DEV_PORT : process.env.PORT}`))
+server.listen(process.env.PORT, () => CONSOLE(`Server started at port ${process.env.PORT}`))
